@@ -190,5 +190,9 @@ Tijd per beurt: 60 seconden
 
 ![Timer Half](./img/Timer_half.png)
 
-
+#### Chat systeem
+Deze feature maakt het mogelijk om te kunnen communiceren met elkaar als dat niet direct kan.
+Voor veel multi speler spellen is er vaak communicate in de vorm van berichten, spraak of fotos.
+Deze feature zou ook mogelijkheden kunnen crearen waarbij je een ander mogelijk trucjes leert of strategieen om de andere te helpen.
+Hierbij zou je ook mogelijk met iemand van je familie wat in een andere land woont of op vakantie is mee kunnnen communiceren.
 
