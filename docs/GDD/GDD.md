@@ -133,7 +133,7 @@ Een spel gemaakt door Twister, een gedreven team dat werkt aan indiegames.
 
 ![IMG](./img/Colector.png)
 
-- Defence tower: HP:0 Damage:0 Cost:2
+- Defence tower: HP:10 Damage:1 Cost:2
 
 ### Unit:
 
