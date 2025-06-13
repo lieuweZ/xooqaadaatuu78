@@ -168,6 +168,7 @@ Dit is de wachtruimte voor een lobby, hier kun je een game starten.
 
 ### Map/Rescource
 Hier zie je hoe rescources gedisplayed worden in de map
+
 ![Rescource](./img/rescource.png)
 
 #### Player Info  
