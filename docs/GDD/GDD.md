@@ -166,6 +166,10 @@ Dit is de wachtruimte voor een lobby, hier kun je een game starten.
 
 ### In Game
 
+### Map/Rescource
+Hier zie je hoe rescources gedisplayed worden in de map
+![Rescource](./img/rescource.png)
+
 #### Player Info  
 Hier zie je de resources en units die je hebt.
 
