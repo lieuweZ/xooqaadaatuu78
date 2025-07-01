@@ -147,6 +147,10 @@ Sound you hear when its your turn
 
 ![Audio](./audio/your_turn.mp3)
 
+Sound when you get a achievement
+
+![Audio](./audio/switch-3.wav)
+
 ### Menus
 
 #### Main Menu  
@@ -162,7 +166,7 @@ Dit is het scherm waar je een lobby kunt aanmaken.
 #### In Game Lobby  
 Dit is de wachtruimte voor een lobby, hier kun je een game starten.
 
-![In Game Lobby](./img/In_game_lobby.png){width=500}
+![In Game Lobby](./img/UitlegMenu.png){width=500}
 
 ### In Game
 
@@ -201,3 +205,12 @@ Voor veel multi speler spellen is er vaak communicate in de vorm van berichten, 
 Deze feature zou ook mogelijkheden kunnen crearen waarbij je een ander mogelijk trucjes leert of strategieen om de andere te helpen.
 Hierbij zou je ook mogelijk met iemand van je familie wat in een andere land woont of op vakantie is mee kunnnen communiceren.
 
+#### Achievement systeem
+
+De feature maakt het mogelijk om achievements te krijgen. veel spellen hebben achievement, meestal om te voorzorgen dat een speler meer motivatie krijgt. Als je een achievement behaald komt er een popup met geluidje rechtsonder in het scherm.
+
+![Achievement MasterBuilder](./img/MasterBuilderAchievement.png)
+
+![Unit Commander](./img/UnitCommander.png)
+
+![Fortress Architect](./img/FortressArchitect.png)
