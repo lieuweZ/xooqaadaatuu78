@@ -1,0 +1,161 @@
+using Blok3Game.Engine.AssetHandler;
+using Blok3Game.Engine.JSON;
+using Blok3Game.Engine.SocketIOClient;
+using Blok3Game.Engine.UI;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using Blok3Game.Engine.GameObjects;
+using Blok3Game.Engine.Helpers;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace Blok3Game.GameStates
+{
+    public class LobbyWaitForPlayersState : MovableMenuItem
+    {
+        private Dictionary<string, TextGameObject> players = new Dictionary<string, TextGameObject>();
+
+        public LobbyWaitForPlayersState() : base()
+        {
+            CreateButtons();
+        }
+
+        private void CreateButtons()
+        {
+            Button buttonStart = CreateButton(new Vector2(150, 525), "START GAME", OnButtonStartClicked);
+            Button buttonCancel = CreateButton(new Vector2(450, 525), "CANCEL", OnButtonCancelClicked);
+            TextGameObject tut = CreateText(new Vector2(211, 250 + 125), "Instructions\nSelect structures bij  choosing from the top menu.\nClick an empty cell next to one of your buildings to build the structure\nOrder units from structures\nUse your units to extract resources from resource nodes\nUse your units to destroy the main building of your opponent.");
+            Add(tut);
+
+
+            TextGameObject achHeader = CreateText(new Vector2(-100, 380), "ACHIEVEMENTS");
+            achHeader.Color = Color.Gold;
+            Add(achHeader);
+
+        TextGameObject achList = CreateText(new Vector2(-100, 410),
+            "- Unit Commander: 10 Units\n" +
+            "- Master Builder: 5 Resource Collectors\n" +
+            "- Fortress Architect: 3 Defensive Buildings\n" +
+            "- Unit Factory Master: 4 Unit Creators"
+        );
+        Add(achList);
+
+        }
+
+        protected override void HandleIncomingMessages()
+        {
+            base.HandleIncomingMessages();
+
+            SocketClient.Instance.SubscribeToDataPacket<EnterRoomData>(OnPlayerEnteredRoomDataReceived);
+            SocketClient.Instance.SubscribeToDataPacket<RoomActivePlayersData>(OnActivePlayersDataReceived);
+            SocketClient.Instance.SubscribeToDataPacket<StartGameData>(OnGameStartedDataReceived);
+
+            //We need to remove the player from the list when they leave the room.
+            //This can either be because they left the room or because they disconnected.
+            SocketClient.Instance.SubscribeToDataPacket<LeaveRoomData>(OnPlayerLeftRoom);
+            SocketClient.Instance.SubscribeToDataPacket<PlayerDisconnectedData>(OnPlayerDisconnected);
+            SocketClient.Instance.SubscribeToDataPacket<PlayerReconnectedData>(OnPlayerReconnectedDataReceived);
+        }
+
+        private void AddPlayer(PlayerData player)
+        {
+            string userId = player.UserId;
+
+            if (players.ContainsKey(userId))
+            {
+                return;
+            }
+
+            string playerName = player.Name.ToUpper();
+
+            TextGameObject textGameObject = CreateText(new Vector2(211, 250 + 50 * players.Count), playerName);
+            players.Add(userId, textGameObject);
+        }
+
+        private void RemovePlayer(string userId)
+        {
+            if (players.ContainsKey(userId))
+            {
+                Remove(players[userId]);
+                players.Remove(userId);
+            }
+        }
+
+        private void OnPlayerLeftRoom(LeaveRoomData leaveRoomData)
+        {
+            string userId = leaveRoomData.Player.UserId;
+
+            if (userId == SocketClient.Instance.UserId)
+            {
+                //for every player in the room, remove them from the list.
+                foreach (KeyValuePair<string, TextGameObject> player in players)
+                {
+                    RemovePlayer(player.Key);
+                }
+            }
+            else
+            { 
+                RemovePlayer(userId);            
+            }
+        }
+
+        public override void DrawBackground(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            DrawingHelper.FillRectangle(new Rectangle(0, 0, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height), spriteBatch, new Color(DrawingHelper.GetColorCGA(9)));
+        }
+
+        private void OnPlayerDisconnected(PlayerDisconnectedData playerDisconnectedData)
+        {
+            string userId = playerDisconnectedData.Player.UserId;
+            RemovePlayer(userId);
+        }
+
+        private void OnActivePlayersDataReceived(RoomActivePlayersData data)
+        {
+            foreach (PlayerData player in data.Players)
+            {
+                AddPlayer(player);
+            }
+        }
+
+        private void OnPlayerEnteredRoomDataReceived(EnterRoomData enterRoomData)
+        {
+            AddPlayer(enterRoomData.Player);
+        }
+
+        private void OnPlayerReconnectedDataReceived(PlayerReconnectedData playerReconnectedData)
+        { 
+            AddPlayer(playerReconnectedData.Player);
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+
+            SocketClient.Instance.SendDataPacket(new RoomActivePlayersData());
+        }
+
+        private void OnGameStartedDataReceived(StartGameData data)
+        {
+            nextScreenName = GameStateManager.GAME_STATE;
+            Animate(AnimationState.MovingOffscreenInactive);
+        }
+
+        private void OnButtonStartClicked(UIElement element)
+        {
+			GameEnvironment.AssetManager.AudioManager.PlaySoundEffect("button_agree");
+            SocketClient.Instance.SendDataPacket(new StartGameData()
+            {
+                RoomId = SocketClient.Instance.RoomId,
+                UserId = SocketClient.Instance.UserId
+            });
+        }
+
+        private void OnButtonCancelClicked(UIElement element)
+        {
+			GameEnvironment.AssetManager.AudioManager.PlaySoundEffect("button_cancel");
+            nextScreenName = GameStateManager.GO_TO_PREVIOUS_SCREEN;
+            SocketClient.Instance.SendDataPacket(new LeaveRoomData());
+            Animate(AnimationState.MovingOffscreenInactive);
+        }
+    }   
+}

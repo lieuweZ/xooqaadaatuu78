@@ -1,0 +1,17 @@
+﻿namespace Blok3Game.Engine.JSON
+{
+    public class StartGameData : DataPacket
+    {
+        public string RoomId { get; set; }
+
+        public string UserId { get; set; }
+        public string[] Players { get; set; }
+
+        public int RoomSeed { get; set; }
+
+        public StartGameData() : base()
+        {
+            EventName = "start game";
+        }
+    }
+}
